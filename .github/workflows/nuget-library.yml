@@ -1,0 +1,83 @@
+name: NuGet Libraries CI/CD
+
+on:
+  pull_request:
+    paths:
+      - 'nuget/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'nuget/**'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  detect-changed-libraries:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.detect.outputs.matrix }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed projects
+        id: detect
+        shell: pwsh
+        run: |
+          # This script should output a JSON array of changed projects
+          # Example: ["nuget/SampleNugetLib/SampleNugetLib"]
+          $changed = ./scripts/shared/changed-solutions.ps1
+          $json = $changed | ConvertTo-Json -Compress
+          Write-Output "::set-output name=matrix::$json"
+
+  build-and-publish:
+    needs: detect-changed-libraries
+    if: needs.detect-changed-libraries.outputs.matrix != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.detect-changed-libraries.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build & Publish NuGet Library
+        shell: pwsh
+        env:
+          NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+        run: |
+          $project = "${{ matrix.project }}"
+          Write-Host "Building library: $project"
+
+          # Always build
+          ./scripts/build.ps1 `
+            -ProjectType dotnet `
+            -DotnetMode library `
+            -ProjectPath $project `
+            -Build $true `
+            -Publish $false
+
+          # Only publish if pushing to main
+          if ($env:GITHUB_EVENT_NAME -eq "push") {
+              Write-Host "Publishing NuGet package for $project"
+              ./scripts/build.ps1 `
+                -ProjectType dotnet `
+                -DotnetMode library `
+                -ProjectPath $project `
+                -Build $true `
+                -Publish $true
+          } else {
+              Write-Host "Skipping publish on pull request"
+          }

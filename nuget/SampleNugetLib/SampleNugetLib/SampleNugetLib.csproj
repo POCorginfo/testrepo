@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Base version lives in csproj -->
+    <Version>1.3.2</Version>
+    <!-- NuGet metadata -->
+    <PackageId>SampleNugetLib</PackageId>
+    <Authors>Shivani Agrawal</Authors>
+    <Description>Sample NuGet package</Description>
+    <RepositoryUrl>https://github.com/POCorginfo/testrepo</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

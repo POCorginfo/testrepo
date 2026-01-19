@@ -1,0 +1,98 @@
+name: DotNet CI
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'api/**'
+  push:
+    branches: [ main ]
+    paths:
+      - 'api/**'
+
+permissions:
+  contents: read
+
+jobs:
+# -------------------------------------------------
+# Detect changed projects
+# -------------------------------------------------
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.detect.outputs.matrix }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed .NET projects
+        id: detect
+        shell: pwsh
+        run: |
+          ./scripts/shared/changed-solutions.ps1
+
+# -------------------------------------------------
+# Build only changed projects
+# -------------------------------------------------
+  build:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.matrix != ''
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+
+    steps:
+      # -----------------------------
+      # Checkout
+      # -----------------------------
+      - uses: actions/checkout@v4
+
+      # -----------------------------
+      # Setup .NET 10
+      # -----------------------------
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # -----------------------------
+      # Build & Test
+      # -----------------------------
+      - name: Build and Test
+        shell: pwsh
+        run: |
+          ./scripts/build.ps1 `
+            -ProjectType dotnet `
+            -DotnetMode app `
+            -Build $true `
+            -Publish $false `
+            -ProjectPath '${{ matrix.project }}'
+
+      # -----------------------------
+      # Publish (main only)
+      # -----------------------------
+      - name: Publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: |
+          ./scripts/build.ps1 `
+            -ProjectType dotnet `
+            -DotnetMode app `
+            -Build $true `
+            -Publish $true `
+            -ProjectPath '${{ matrix.project }}'
+
+      # -----------------------------
+      # Upload Artifact
+      # -----------------------------
+      - name: Upload artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployable-${{ matrix.project }}
+          path: artifacts/${{ matrix.project }}/**

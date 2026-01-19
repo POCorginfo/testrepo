@@ -1,0 +1,82 @@
+name: Release CI/CD
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on tags like v1.0, v2.0.0
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-uat:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Set version from tag (strip leading v)
+        id: vars
+        run: |
+          # Remove leading 'v' if present
+          VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${VERSION#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          
+      - name: Build and Test
+        shell: pwsh
+        run: |
+          ./scripts/build.ps1 `
+            -ProjectType dotnet `
+            -DotnetMode app `
+            -Build $true `
+            -Publish $false `
+            -ProjectPath 'SampleDotNet10App' `
+            -Version $env:VERSION
+
+      - name: Publish UAT artifact
+        shell: pwsh
+        run: |
+          ./scripts/build.ps1 `
+            -ProjectType dotnet `
+            -DotnetMode app `
+            -Build $true `
+            -Publish $true `
+            -ProjectPath 'SampleDotNet10App' `
+            -Version $env:VERSION
+
+      - name: Upload artifact for UAT
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployable-artifact
+          path: artifacts/**
+
+  deploy-prod:
+    needs: build-and-uat
+    runs-on: ubuntu-latest
+    environment: production  # ✅ This triggers manual approval in GitHub
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: deployable-artifact
+          path: ./artifact
+
+      - name: Publish artifact to Prod
+        shell: pwsh
+        run: |
+          ./scripts/build.ps1 `
+            -ProjectType dotnet `
+            -DotnetMode app `
+            -Build $false `
+            -Publish $true `
+            -ProjectPath 'SampleDotNet10App' `
+            -Version $env:VERSION
