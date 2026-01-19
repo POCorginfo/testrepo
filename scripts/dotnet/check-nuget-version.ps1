@@ -38,6 +38,9 @@ $versions = dotnet nuget list $packageId `
     --source $indexUrl `
     --verbosity quiet 2>$null
 
+# Reset exit code because dotnet returns 1 when package doesn't exist
+$global:LASTEXITCODE = 0
+
 if ($versions -match $version) {
     throw "Version $version already exists for package $packageId"
 }
