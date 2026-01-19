@@ -53,6 +53,8 @@ jobs:
       - name: Validate NuGet version (PR only)
         if: github.event_name == 'pull_request'
         shell: pwsh
+        env:
+          NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
         run: |
           $project = "${{ matrix.project }}"
           ./scripts/dotnet/check-nuget-version.ps1 `
