@@ -55,7 +55,7 @@ Write-Host "--------------------------------------"
 $changedFiles = git diff --name-only $diffRange
 
 if (-not $changedFiles) {
-    Write-Host "✅ No files changed"
+    Write-Host "No files changed"
     "matrix=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
     exit 0
 }
@@ -95,7 +95,7 @@ foreach ($file in $changedFiles) {
     # -----------------------------------------
     foreach ($shared in $SharedRoots) {
         if ($file -like "$shared/*") {
-            Write-Host "⚠ Shared code changed → full rebuild"
+            Write-Host "Shared code changed → full rebuild"
             $fullRebuild = $true
             break
         }
@@ -144,7 +144,7 @@ if ($fullRebuild) {
 # -------------------------------------------------
 
 if ($projects.Count -eq 0) {
-    Write-Host "✅ No .NET project changes detected"
+    Write-Host "No .NET project changes detected"
     "matrix=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
     exit 0
 }
@@ -160,7 +160,7 @@ $matrix = @{
 $json = $matrix | ConvertTo-Json -Compress
 
 Write-Host "--------------------------------------"
-Write-Host "📦 Build matrix:"
+Write-Host "Build matrix:"
 Write-Host $json
 Write-Host "======================================"
 

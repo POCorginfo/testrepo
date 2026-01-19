@@ -32,7 +32,7 @@ jobs:
         id: detect
         shell: pwsh
         run: |
-           ./scripts/shared/changed-solutions.ps1 `
+           ./scripts/shared/detect-changed-solutions.ps1 `
            -SourceRoots @("api")
 
 # -------------------------------------------------

@@ -30,7 +30,7 @@ jobs:
         id: detect
         shell: pwsh
         run: |
-          ./scripts/shared/changed-solutions.ps1 `
+          ./scripts/shared/detect-changed-solutions.ps1 `
           -SourceRoots @("nuget")
 
   build-and-publish:
@@ -49,7 +49,16 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
+          
+      - name: Validate NuGet version (PR only)
+        if: github.event_name == 'pull_request'
+        shell: pwsh
+        run: |
+          $project = "${{ matrix.project }}"
+          ./scripts/dotnet/check-nuget-version.ps1 `
+            -ProjectPath $project `
+            -GitHubOwner "POCorginfo"
+            
       - name: Build & Publish NuGet Library
         shell: pwsh
         env:
