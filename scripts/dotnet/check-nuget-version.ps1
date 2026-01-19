@@ -40,7 +40,6 @@ $versions = dotnet nuget list $packageId `
 
 if ($versions -match $version) {
     throw "Version $version already exists for package $packageId"
-    exit 1
 }
 
 Write-Host "Version $version does not exist yet"
