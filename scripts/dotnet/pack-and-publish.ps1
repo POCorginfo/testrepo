@@ -77,6 +77,10 @@ $source = "https://nuget.pkg.github.com/$GitHubOwner/index.json"
 
 dotnet nuget push $package.FullName `
     --source $source `
-    --api-key $GitHubToken `
+    --api-key $GitHubToken
+
+if ($LASTEXITCODE -ne 0) {
+    throw "NuGet push failed. Version $version already exists in GitHub Packages."
+}
 
 Write-Host "NuGet package published successfully: $($package.Name)"
