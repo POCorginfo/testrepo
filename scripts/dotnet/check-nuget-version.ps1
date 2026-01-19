@@ -1,14 +1,13 @@
 <#
 Purpose:
-- Fails if the NuGet package version already exists in GitHub Packages
-- Passes if the version is NOT published yet
-- Uses PackageId + Version from the .csproj
-- Designed for CI guard checks
+- Fail if NuGet package version already exists in GitHub Packages
+- Pass if version does NOT exist
+- Reliable REST-based check (no NuGet CLI quirks)
 #>
 
 param(
     [Parameter(Mandatory)]
-    [string]$ProjectPath,   # path to .csproj or project folder
+    [string]$ProjectPath,
 
     [Parameter(Mandatory)]
     [string]$GitHubOwner,
@@ -46,34 +45,30 @@ Write-Host "Checking NuGet package: $packageId"
 Write-Host "Checking version       : $version"
 
 if (-not $GitHubToken) {
-    throw "GITHUB_TOKEN not provided"
+    throw "NUGET_TOKEN not provided"
 }
 
 # -----------------------------
-# Authenticate (temp source)
+# GitHub REST API check
 # -----------------------------
-$sourceName = "github-check"
-$sourceUrl  = "https://nuget.pkg.github.com/$GitHubOwner/index.json"
+$headers = @{
+    Authorization = "Bearer $GitHubToken"
+    Accept        = "application/vnd.github+json"
+}
 
-dotnet nuget remove source $sourceName 2>$null | Out-Null
+$uri = "https://api.github.com/orgs/$GitHubOwner/packages/nuget/$packageId/versions?per_page=100"
 
-dotnet nuget add source $sourceUrl `
-    --name $sourceName `
-    --username $GitHubOwner `
-    --password $GitHubToken `
-    --store-password-in-clear-text
+try {
+    $versions = Invoke-RestMethod -Uri $uri -Headers $headers -Method GET
+} catch {
+    throw "Failed to query GitHub Packages API. Check token permissions."
+}
 
-# -----------------------------
-# Check version
-# -----------------------------
-$versions = dotnet nuget list $packageId `
-    --source $sourceName `
-    --verbosity quiet
+$exists = $versions | Where-Object {
+    $_.name -eq $version
+}
 
-# dotnet nuget list returns exit code 1 if no versions exist
-$global:LASTEXITCODE = 0
-
-if ($versions -match [regex]::Escape($version)) {
+if ($exists) {
     Write-Error "NuGet package $packageId version $version is already published"
     exit 1
 }
