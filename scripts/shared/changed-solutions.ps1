@@ -1,6 +1,9 @@
 param(
-    # Root folders where .NET projects live
-    [string[]]$SourceRoots = @("src")
+    # Root folders this workflow cares about
+    [string[]]$SourceRoots = @(),
+
+    # Optional shared folders that trigger full rebuild
+    [string[]]$SharedRoots = @()
 )
 
 Write-Host "======================================"
@@ -68,18 +71,36 @@ $projects = New-Object System.Collections.Generic.HashSet[string]
 $fullRebuild = $false
 
 foreach ($file in $changedFiles) {
+    # -----------------------------------------
+    # Ignore files outside SourceRoots
+    # -----------------------------------------
+    $isUnderRoot = $false
+    foreach ($root in $SourceRoots) {
+        if ($file -like "$root/*") {
+            $isUnderRoot = $true
+            break
+        }
+    }
 
+    if (-not $isUnderRoot) {
+        continue
+    }
     # Ignore non-code changes
-    if ($file -match "^docs/|\.md$") {
+    if ($file -like "docs/*" -or $file -like "*.md") {
         continue
     }
 
-    # Shared/common code → rebuild everything
-    if ($file -match "^src/Common/") {
-        Write-Host "⚠ Shared code changed → full rebuild"
-        $fullRebuild = $true
-        break
+    # -----------------------------------------
+    # Shared code → full rebuild
+    # -----------------------------------------
+    foreach ($shared in $SharedRoots) {
+        if ($file -like "$shared/*") {
+            Write-Host "⚠ Shared code changed → full rebuild"
+            $fullRebuild = $true
+            break
+        }
     }
+    if ($fullRebuild) { break }
 
     # If csproj itself changed
     if ($file -like "*.csproj") {

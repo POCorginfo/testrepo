@@ -30,11 +30,8 @@ jobs:
         id: detect
         shell: pwsh
         run: |
-          # This script should output a JSON array of changed projects
-          # Example: ["nuget/SampleNugetLib/SampleNugetLib"]
-          $changed = ./scripts/shared/changed-solutions.ps1
-          $json = $changed | ConvertTo-Json -Compress
-          Write-Output "::set-output name=matrix::$json"
+          ./scripts/shared/changed-solutions.ps1 `
+          -SourceRoots @("nuget")
 
   build-and-publish:
     needs: detect-changed-libraries

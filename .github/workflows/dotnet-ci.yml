@@ -32,7 +32,8 @@ jobs:
         id: detect
         shell: pwsh
         run: |
-          ./scripts/shared/changed-solutions.ps1
+           ./scripts/shared/changed-solutions.ps1 `
+           -SourceRoots @("api")
 
 # -------------------------------------------------
 # Build only changed projects
