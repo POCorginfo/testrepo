@@ -13,7 +13,7 @@ param(
     [Parameter(Mandatory)]
     [string]$GitHubOwner,
 
-    [string]$GitHubToken = $env:GITHUB_TOKEN
+    [string]$GitHubToken = $env:NUGET_TOKEN
 )
 
 $ErrorActionPreference = "Stop"
