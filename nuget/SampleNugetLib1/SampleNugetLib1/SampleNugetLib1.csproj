@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <!-- Base version lives in csproj -->
-    <Version>1.0.4</Version>
+    <DomainVersion>1.2.0</DomainVersion>
     <!-- NuGet metadata -->
+    <Version>$(DomainVersion)</Version>
     <PackageId>SampleNugetLib1</PackageId>
     <Authors>Shivani Agrawal</Authors>
     <Description>Sample NuGet package</Description>
@@ -12,6 +13,9 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <BuildDate>$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</BuildDate>
+    <BuildTime>$([System.DateTime]::UtcNow.ToString("HHmm"))</BuildTime>
+    <InformationalVersion>$(DomainVersion)+$(BuildDate).$(BuildTime)</InformationalVersion>
   </PropertyGroup>
 
 </Project>
