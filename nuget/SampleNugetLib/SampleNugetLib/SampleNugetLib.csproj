@@ -1,17 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <!-- Base version lives in csproj -->
-    <Version>1.0.3</Version>
-    <!-- NuGet metadata -->
-    <PackageId>SampleNugetLib</PackageId>
-    <Authors>Shivani Agrawal</Authors>
-    <Description>Sample NuGet package</Description>
-    <RepositoryUrl>https://github.com/POCorginfo/testrepo</RepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+  <TargetFramework>net10.0</TargetFramework>
+
+  <!-- NuGet identity -->
+  <Version>1.0.4</Version>
+  <PackageId>SampleNugetLib</PackageId>
+
+  <!-- Package metadata -->
+  <Authors>Shivani Agrawal</Authors>
+  <RepositoryUrl>https://github.com/POCorginfo/testrepo</RepositoryUrl>
+  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+  <ImplicitUsings>enable</ImplicitUsings>
+  <Nullable>enable</Nullable>
+
+  <!-- Build metadata -->
+  <BuildTimestamp>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm 'UTC'"))</BuildTimestamp>
+
+  <!-- Git commit -->
+    <GitCommit>$(GIT_SHA_SHORT)</GitCommit>
+    <GitCommit Condition="'$(GitCommit)' == ''">local</GitCommit>
+
+  <!-- Description INCLUDING informational version -->
+  <Description>
+  Name: Sample NuGet package
+  Build: $(BuildTimestamp)
+  Commit:https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
+  </Description>
+</PropertyGroup>
 
 </Project>
