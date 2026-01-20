@@ -1,21 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <!-- Base version lives in csproj -->
-    <DomainVersion>1.2.0</DomainVersion>
-    <!-- NuGet metadata -->
-    <Version>$(DomainVersion)</Version>
-    <PackageId>SampleNugetLib1</PackageId>
-    <Authors>Shivani Agrawal</Authors>
-    <Description>Sample NuGet package</Description>
-    <RepositoryUrl>https://github.com/POCorginfo/testrepo</RepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <BuildDate>$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</BuildDate>
-    <BuildTime>$([System.DateTime]::UtcNow.ToString("HHmm"))</BuildTime>
-    <InformationalVersion>$(DomainVersion)+$(BuildDate).$(BuildTime)</InformationalVersion>
-  </PropertyGroup>
+  <TargetFramework>net10.0</TargetFramework>
+
+  <!-- Base version -->
+  <DomainVersion>1.2.1</DomainVersion>
+
+  <!-- NuGet identity -->
+  <Version>$(DomainVersion)</Version>
+  <PackageId>SampleNugetLib1</PackageId>
+
+  <!-- Package metadata -->
+  <Authors>Shivani Agrawal</Authors>
+  <RepositoryUrl>https://github.com/POCorginfo/testrepo</RepositoryUrl>
+  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+  <ImplicitUsings>enable</ImplicitUsings>
+  <Nullable>enable</Nullable>
+
+  <!-- Build metadata -->
+  <BuildDate>$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</BuildDate>
+  <BuildTime>$([System.DateTime]::UtcNow.ToString("HHmm"))</BuildTime>
+
+  <InformationalVersion>
+    $(DomainVersion)+$(BuildDate).$(BuildTime)
+  </InformationalVersion>
+
+  <!-- Description INCLUDING informational version -->
+  <Description>
+    Sample NuGet package
+    (Build: $(InformationalVersion))
+  </Description>
+</PropertyGroup>
 
 </Project>
