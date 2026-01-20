@@ -3,11 +3,8 @@
   <PropertyGroup>
   <TargetFramework>net10.0</TargetFramework>
 
-  <!-- Base version -->
-  <DomainVersion>1.2.1</DomainVersion>
-
   <!-- NuGet identity -->
-  <Version>$(DomainVersion)</Version>
+  <Version>1.2.2</Version>
   <PackageId>SampleNugetLib1</PackageId>
 
   <!-- Package metadata -->
@@ -19,17 +16,16 @@
   <Nullable>enable</Nullable>
 
   <!-- Build metadata -->
-  <BuildDate>$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</BuildDate>
-  <BuildTime>$([System.DateTime]::UtcNow.ToString("HHmm"))</BuildTime>
+  <BuildTimestamp>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm 'UTC'"))</BuildTimestamp>
 
-  <InformationalVersion>
-    $(DomainVersion)+$(BuildDate).$(BuildTime)
-  </InformationalVersion>
+  <!-- Git commit -->
+    <GitCommit>$(GIT_SHA_SHORT)</GitCommit>
+    <GitCommit Condition="'$(GitCommit)' == ''">local</GitCommit>
 
   <!-- Description INCLUDING informational version -->
-  <Description>
-    Sample NuGet package
-    (Build: $(InformationalVersion))
+  <Description>Sample NuGet package
+   Build: $(BuildTimestamp)
+   Commit: https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
   </Description>
 </PropertyGroup>
 
