@@ -23,9 +23,10 @@
     <GitCommit Condition="'$(GitCommit)' == ''">local</GitCommit>
 
   <!-- Description INCLUDING informational version -->
-  <Description>Sample NuGet package
-   Build: $(BuildTimestamp)
-   Commit: https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
+  <Description>
+  Sample NuGet package
+  Build: $(BuildTimestamp)
+  Commit: https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
   </Description>
 </PropertyGroup>
 
