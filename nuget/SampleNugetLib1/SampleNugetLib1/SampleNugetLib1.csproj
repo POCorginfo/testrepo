@@ -4,7 +4,7 @@
   <TargetFramework>net10.0</TargetFramework>
 
   <!-- NuGet identity -->
-  <Version>1.2.2</Version>
+  <Version>1.2.3</Version>
   <PackageId>SampleNugetLib1</PackageId>
 
   <!-- Package metadata -->
@@ -23,9 +23,10 @@
     <GitCommit Condition="'$(GitCommit)' == ''">local</GitCommit>
 
   <!-- Description INCLUDING informational version -->
-  <Description>Sample NuGet package
-   Build: $(BuildTimestamp)
-   Commit: https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
+  <Description>
+  Sample NuGet package
+  Build: $(BuildTimestamp)
+  Commit: https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
   </Description>
 </PropertyGroup>
 
