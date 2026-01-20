@@ -37,8 +37,6 @@ jobs:
     needs: detect-changed-libraries
     if: needs.detect-changed-libraries.outputs.matrix != '[]'
     runs-on: ubuntu-latest
-    env:
-      GIT_SHA_SHORT: ${{ github.sha }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.detect-changed-libraries.outputs.matrix) }}
@@ -46,6 +44,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      - name: Set short Git SHA
+        shell: bash
+        run: echo "GIT_SHA_SHORT=${GITHUB_SHA::8}" >> $GITHUB_ENV
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
