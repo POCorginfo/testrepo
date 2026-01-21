@@ -36,11 +36,17 @@ if (-not $csproj) {
 # -----------------------------
 # Read version from csproj
 # -----------------------------
-[xml]$xml = Get-Content $csproj.FullName
-$baseVersion = $xml.Project.PropertyGroup.Version | Select-Object -First 1
+$baseVersion = dotnet msbuild $csproj.FullName `
+    -nologo `
+    -t:GetProperty `
+    -p:PropertyName=Version `
+    -p:GetPropertyOutputFile=version.txt | Out-Null
+
+$baseVersion = Get-Content version.txt -Raw
+$baseVersion = $baseVersion.Trim()
 
 if (-not $baseVersion) {
-    throw "Version not found in csproj"
+    throw "Failed to resolve evaluated Version from csproj"
 }
 
 if ($IsPrerelease) {
@@ -50,6 +56,7 @@ if ($IsPrerelease) {
 }
 
 Write-Host "NuGet Version to publish: $version"
+
 
 # -----------------------------
 # Pack
