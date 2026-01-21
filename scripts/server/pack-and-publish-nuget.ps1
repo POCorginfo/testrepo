@@ -13,7 +13,7 @@ param(
 
     [string]$GitHubOwner,
 
-    [string]$GitHubToken = $env:NUGET_TOKEN
+    [string]$GitHubToken = $env:GITHUB_TOKEN,
 	
 	[bool]$IsPrerelease = $false
 )
@@ -60,8 +60,9 @@ New-Item -ItemType Directory -Force -Path $output | Out-Null
 dotnet pack $csproj.FullName `
     -c $Configuration `
     -o $output `
-	/p:PackageVersion=$version `
+    /p:PackageVersion=$version `
     --no-build
+
 
 # -----------------------------
 # Find package
@@ -86,7 +87,7 @@ $source = "https://nuget.pkg.github.com/$GitHubOwner/index.json"
 
 dotnet nuget push $package.FullName `
     --source $source `
-    --api-key $GitHubToken `
+    --api-key $GitHubToken
 
 if ($LASTEXITCODE -ne 0) {
     throw "NuGet push failed. Version $version already exists in GitHub Packages."
