@@ -11,17 +11,9 @@
     <Authors>InfoBeans</Authors>
     <RepositoryUrl>https://github.com/POCorginfo/testrepo</RepositoryUrl>
     <Company>InfoBeans</Company>
-	  <!-- Build metadata -->
-	  <BuildTimestamp>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm 'UTC'"))</BuildTimestamp>
-
-	  <!-- Git commit -->
-    <GitCommit>$(GIT_SHA_SHORT)</GitCommit>
-    <GitCommit Condition="'$(GitCommit)' == ''">local</GitCommit>
 	
     <Description>
     This package provides a generic repository with async support and validation for InfoBeans projects.
-	  Build: $(BuildTimestamp)
-	  Commit:https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
     </Description>
 
     <PackageTags>infobeans;core;async;repository;</PackageTags>

@@ -5,42 +5,37 @@ Single entry point for PR, CI, and local builds.
 
 param(
 
-    [string]$ProjectPath,
-    [bool]$Publish = $false
+    [string]$ProjectPath
 )
 
 $ErrorActionPreference = "Stop"
 
-. "$PSScriptRoot/shared/common.ps1"
 
-Write-Info "Starting build for project type: $ProjectType"
+Write-Host "Starting build for project type: $ProjectType"
 
 try {
 
     # -----------------------------
     # Restore → Build → Test
     # -----------------------------
-	. "$PSScriptRoot/server/restore.ps1" -ProjectPath $ProjectPath
-    . "$PSScriptRoot/server/build.ps1"   -ProjectPath $ProjectPath
-    . "$PSScriptRoot/server/test.ps1"    -ProjectPath $ProjectPath
+	. "$PSScriptRoot/tasks/Restore-DotNetProject.ps1" -ProjectPath $ProjectPath
+    . "$PSScriptRoot/tasks/Build-DotNetProject.ps1"   -ProjectPath $ProjectPath
+    . "$PSScriptRoot/tasks/Test-DotNetProject.ps1"    -ProjectPath $ProjectPath
 
     # -----------------------------
     # NuGet library publish
     # -----------------------------
-    if ($Publish) {
-
     $isPrerelease = $env:GITHUB_EVENT_NAME -eq "pull_request"
 
-    . "$PSScriptRoot/server/pack-and-publish-nuget.ps1" `
+    . "$PSScriptRoot/tasks/Publish-NuGetPackage.ps1" `
         -ProjectPath $ProjectPath `
         -Configuration Release `
         -GitHubOwner "POCorginfo" `
         -GitHubToken $env:NUGET_TOKEN `
         -IsPrerelease $isPrerelease
 
-    Write-Info "Library build and publish completed successfully"
+    Write-Host "Library build and publish completed successfully"
     exit 0
-}
 }
 catch {
     Write-Error "BUILD FAILED: $($_.Exception.Message)"

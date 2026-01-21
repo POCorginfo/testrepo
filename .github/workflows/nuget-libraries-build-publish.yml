@@ -1,4 +1,4 @@
-name: NuGet Libraries CI/CD
+name: NuGet Libraries Build & Publish
 
 on:
   pull_request:
@@ -30,7 +30,7 @@ jobs:
         id: detect
         shell: pwsh
         run: |
-          ./scripts/shared/detect-changed-solutions.ps1 `
+          ./scripts/tasks/Detect-ChangedDotNetProjects.ps1 `
           -SourceRoots @("nuget")
 
   build-and-publish:
@@ -45,10 +45,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         
-      - name: Set short Git SHA
-        shell: bash
-        run: echo "GIT_SHA_SHORT=${GITHUB_SHA::8}" >> $GITHUB_ENV
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -62,7 +58,6 @@ jobs:
           $project = "${{ matrix.project }}"
           Write-Host "Building library: $project"
 
-          ./scripts/build.ps1 `
-            -ProjectPath $project `
-            -Publish $true
+          ./scripts/main.ps1 `
+            -ProjectPath $project
 

@@ -1,13 +1,19 @@
+<#
+Purpose:
+Detects which .NET projects are affected by a Git change and outputs
+a GitHub Actions build matrix accordingly.
+#>
+
 param(
-    # Root folders this workflow cares about
+    # Root folders containing .NET projects (e.g. "src")
     [string[]]$SourceRoots = @(),
 
-    # Optional shared folders that trigger full rebuild
+    # Shared folders that require rebuilding all projects
     [string[]]$SharedRoots = @()
 )
 
 Write-Host "======================================"
-Write-Host "🔍 Detecting changed .NET projects"
+Write-Host "Detecting changed .NET projects"
 Write-Host "Event        : $($env:GITHUB_EVENT_NAME)"
 Write-Host "Ref          : $($env.GITHUB_REF)"
 Write-Host "======================================"
