@@ -37,7 +37,7 @@
   <!-- Version Information -->
   <PropertyGroup>
     <DomainVersion>1</DomainVersion>
-    <Year>$([System.DateTime]::Now.Year)</Year>
+    <Year>$([System.DateTime]::Now.ToString("yy"))</Year>
     <Month>$([System.DateTime]::Now.Month)</Month>
     <Day>$([System.DateTime]::Now.Day)</Day>
     <BuildNumber>$(Month)$(Day)</BuildNumber>
