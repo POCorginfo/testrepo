@@ -1,33 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Project Information -->
   <PropertyGroup>
-  <TargetFramework>net10.0</TargetFramework>
+    <ProjectIdentity>SampleNugetLib1</ProjectIdentity>
 
-  <!-- NuGet identity -->
-  <Version>1.2.5</Version>
-  <PackageId>SampleNugetLib1</PackageId>
+    <AssemblyName>$(ProjectIdentity)</AssemblyName>
+    <RootNamespace>$(ProjectIdentity)</RootNamespace>
+    <PackageId>$(ProjectIdentity)</PackageId>
 
-  <!-- Package metadata -->
-  <Authors>Shivani Agrawal</Authors>
-  <RepositoryUrl>https://github.com/POCorginfo/testrepo</RepositoryUrl>
-  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>InfoBeans</Authors>
+    <Company>InfoBeans</Company>
+	  <!-- Build metadata -->
+	  <BuildTimestamp>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm 'UTC'"))</BuildTimestamp>
 
-  <ImplicitUsings>enable</ImplicitUsings>
-  <Nullable>enable</Nullable>
-
-  <!-- Build metadata -->
-  <BuildTimestamp>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm 'UTC'"))</BuildTimestamp>
-
-  <!-- Git commit -->
+	  <!-- Git commit -->
     <GitCommit>$(GIT_SHA_SHORT)</GitCommit>
     <GitCommit Condition="'$(GitCommit)' == ''">local</GitCommit>
+	
+    <Description>
+    This package provides a generic repository with async support and validation for InfoBeans projects.
+	  Build: $(BuildTimestamp)
+	  Commit:https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
+    </Description>
 
-  <!-- Description INCLUDING informational version -->
-  <Description>
-  Name: Sample NuGet package
-  Build: $(BuildTimestamp)
-  Commit:https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
-  </Description>
-</PropertyGroup>
+    <PackageTags>infobeans;core;async;repository;</PackageTags>
+  </PropertyGroup>
+
+  <!-- Project Settings -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- Version Information -->
+  <PropertyGroup>
+    <DomainVersion>1</DomainVersion>
+    <Year>$([System.DateTime]::Now.Year)</Year>
+    <Month>$([System.DateTime]::Now.Month)</Month>
+    <Day>$([System.DateTime]::Now.Day)</Day>
+    <BuildNumber>$(Month)$(Day)</BuildNumber>
+    <Revision>$([System.DateTime]::Now.Hour)$([System.DateTime]::Now.Minute)</Revision>
+    <Version>$(DomainVersion).$(Year).$(BuildNumber).$(Revision)</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+  </ItemGroup>
 
 </Project>

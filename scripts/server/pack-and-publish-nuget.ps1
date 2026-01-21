@@ -14,6 +14,8 @@ param(
     [string]$GitHubOwner,
 
     [string]$GitHubToken = $env:GITHUB_TOKEN
+	
+	[bool]$IsPrerelease = $false
 )
 
 $ErrorActionPreference = "Stop"
@@ -35,13 +37,19 @@ if (-not $csproj) {
 # Read version from csproj
 # -----------------------------
 [xml]$xml = Get-Content $csproj.FullName
-$version = $xml.Project.PropertyGroup.Version | Select-Object -First 1
+$baseVersion = $xml.Project.PropertyGroup.Version | Select-Object -First 1
 
-if (-not $version) {
+if (-not $baseVersion) {
     throw "Version not found in csproj"
 }
 
-Write-Host "NuGet Version: $version"
+if ($IsPrerelease) {
+    $version = "$baseVersion-prerelease"
+} else {
+    $version = $baseVersion
+}
+
+Write-Host "NuGet Version to publish: $version"
 
 # -----------------------------
 # Pack
@@ -52,6 +60,7 @@ New-Item -ItemType Directory -Force -Path $output | Out-Null
 dotnet pack $csproj.FullName `
     -c $Configuration `
     -o $output `
+	/p:PackageVersion=$version `
     --no-build
 
 # -----------------------------

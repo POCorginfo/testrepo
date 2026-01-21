@@ -52,18 +52,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
-          
-      - name: Validate NuGet version
-        if: github.event_name == 'pull_request'
-        shell: pwsh
-        env:
-          NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
-        run: |
-          $project = "${{ matrix.project }}"
-          ./scripts/dotnet/check-nuget-version.ps1 `
-            -ProjectPath $project `
-            -GitHubOwner "POCorginfo"
+          dotnet-version: '10.0.x'          
             
       - name: Build & Publish NuGet Library
         shell: pwsh
@@ -73,23 +62,7 @@ jobs:
           $project = "${{ matrix.project }}"
           Write-Host "Building library: $project"
 
-          # Always build
           ./scripts/build.ps1 `
-            -ProjectType dotnet `
-            -DotnetMode library `
             -ProjectPath $project `
-            -Build $true `
-            -Publish $false
+            -Publish $true
 
-          # Only publish if pushing to main
-          if ($env:GITHUB_EVENT_NAME -eq "push") {
-              Write-Host "Publishing NuGet package for $project"
-              ./scripts/build.ps1 `
-                -ProjectType dotnet `
-                -DotnetMode library `
-                -ProjectPath $project `
-                -Build $true `
-                -Publish $true
-          } else {
-              Write-Host "Skipping publish on pull request"
-          }
