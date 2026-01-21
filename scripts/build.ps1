@@ -34,7 +34,7 @@ try {
     . "$PSScriptRoot/server/pack-and-publish-nuget.ps1" `
         -ProjectPath $ProjectPath `
         -Configuration Release `
-        -GitHubOwner "shivaniagrawal5396" `
+        -GitHubOwner "shivaniagrawal53" `
         -GitHubToken $env:NUGET_TOKEN `
         -IsPrerelease $isPrerelease
 
