@@ -31,7 +31,7 @@ try {
 
     $isPrerelease = $env:GITHUB_EVENT_NAME -eq "pull_request"
 
-    . "$PSScriptRoot/server/pack-and-publish.ps1" `
+    . "$PSScriptRoot/server/pack-and-publish-nuget.ps1" `
         -ProjectPath $ProjectPath `
         -Configuration Release `
         -GitHubOwner "shivaniagrawal5396" `
