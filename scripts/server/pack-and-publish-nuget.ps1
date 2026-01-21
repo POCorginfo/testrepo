@@ -13,7 +13,7 @@ param(
 
     [string]$GitHubOwner,
 
-    [string]$GitHubToken = $env:GITHUB_TOKEN
+    [string]$GitHubToken = $env:GITHUB_TOKEN,
 	
 	[bool]$IsPrerelease = $false
 )
@@ -36,11 +36,14 @@ if (-not $csproj) {
 # -----------------------------
 # Read version from csproj
 # -----------------------------
-[xml]$xml = Get-Content $csproj.FullName
-$baseVersion = $xml.Project.PropertyGroup.Version | Select-Object -First 1
+$baseVersion = dotnet msbuild $csproj.FullName `
+    -nologo `
+    -getProperty:Version
+
+$baseVersion = $baseVersion.Trim()
 
 if (-not $baseVersion) {
-    throw "Version not found in csproj"
+    throw "Failed to resolve evaluated Version from csproj"
 }
 
 if ($IsPrerelease) {
@@ -60,8 +63,9 @@ New-Item -ItemType Directory -Force -Path $output | Out-Null
 dotnet pack $csproj.FullName `
     -c $Configuration `
     -o $output `
-	/p:PackageVersion=$version `
+    /p:PackageVersion=$version `
     --no-build
+
 
 # -----------------------------
 # Find package
