@@ -38,11 +38,8 @@ if (-not $csproj) {
 # -----------------------------
 $baseVersion = dotnet msbuild $csproj.FullName `
     -nologo `
-    -t:GetProperty `
-    -p:PropertyName=Version `
-    -p:GetPropertyOutputFile=version.txt | Out-Null
+    -getProperty:Version
 
-$baseVersion = Get-Content version.txt -Raw
 $baseVersion = $baseVersion.Trim()
 
 if (-not $baseVersion) {
@@ -56,7 +53,6 @@ if ($IsPrerelease) {
 }
 
 Write-Host "NuGet Version to publish: $version"
-
 
 # -----------------------------
 # Pack
