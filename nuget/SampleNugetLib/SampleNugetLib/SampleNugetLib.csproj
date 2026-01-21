@@ -1,33 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Project Information -->
   <PropertyGroup>
-  <TargetFramework>net10.0</TargetFramework>
+    <ProjectIdentity>SampleNugetLib</ProjectIdentity>
 
-  <!-- NuGet identity -->
-  <Version>1.0.4</Version>
-  <PackageId>SampleNugetLib</PackageId>
+    <AssemblyName>$(ProjectIdentity)</AssemblyName>
+    <RootNamespace>$(ProjectIdentity)</RootNamespace>
+    <PackageId>$(ProjectIdentity)</PackageId>
 
-  <!-- Package metadata -->
-  <Authors>Shivani Agrawal</Authors>
-  <RepositoryUrl>https://github.com/POCorginfo/testrepo</RepositoryUrl>
-  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>InfoBeans</Authors>
+    <Company>InfoBeans</Company>
+	
+    <Description>
+    This package provides a generic repository with async support and validation for InfoBeans projects.
+    </Description>
 
-  <ImplicitUsings>enable</ImplicitUsings>
-  <Nullable>enable</Nullable>
+    <PackageTags>infobeans;core;async;repository;</PackageTags>
+  </PropertyGroup>
 
-  <!-- Build metadata -->
-  <BuildTimestamp>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm 'UTC'"))</BuildTimestamp>
+  <!-- Project Settings -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-  <!-- Git commit -->
-    <GitCommit>$(GIT_SHA_SHORT)</GitCommit>
-    <GitCommit Condition="'$(GitCommit)' == ''">local</GitCommit>
+  <!-- Version Information -->
+  <PropertyGroup>
+    <DomainVersion>1</DomainVersion>
+    <Year>$([System.DateTime]::Now.ToString("yy"))</Year>
+    <Month>$([System.DateTime]::Now.Month)</Month>
+    <Day>$([System.DateTime]::Now.Day)</Day>
+    <BuildNumber>$(Month)$(Day)</BuildNumber>
+    <Revision>$([System.DateTime]::Now.Hour)$([System.DateTime]::Now.Minute)</Revision>
+    <Version>$(DomainVersion).$(Year).$(BuildNumber).$(Revision)</Version>
+  </PropertyGroup>
 
-  <!-- Description INCLUDING informational version -->
-  <Description>
-  Name: Sample NuGet package
-  Build: $(BuildTimestamp)
-  Commit:https://github.com/POCorginfo/testrepo/commit/$(GitCommit)
-  </Description>
-</PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+  </ItemGroup>
 
 </Project>
