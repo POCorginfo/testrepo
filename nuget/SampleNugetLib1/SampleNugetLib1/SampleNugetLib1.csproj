@@ -9,7 +9,6 @@
     <PackageId>$(ProjectIdentity)</PackageId>
 
     <Authors>InfoBeans</Authors>
-    <RepositoryUrl>https://github.com/POCorginfo/testrepo</RepositoryUrl>
     <Company>InfoBeans</Company>
 	
     <Description>
