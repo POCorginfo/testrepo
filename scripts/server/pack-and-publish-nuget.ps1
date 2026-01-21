@@ -13,7 +13,7 @@ param(
 
     [string]$GitHubOwner,
 
-    [string]$GitHubToken = $env:GITHUB_TOKEN
+    [string]$GitHubToken = $env:NUGET_TOKEN
 	
 	[bool]$IsPrerelease = $false
 )
